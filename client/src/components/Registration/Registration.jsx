@@ -1,6 +1,7 @@
 import { useState } from "react"
 import axios from "axios"
 import { useHistory } from "react-router-dom"
+import './Registration.css'
 
 const Registration = () => {
     const [userName, setUserName] = useState('')
@@ -14,15 +15,16 @@ const Registration = () => {
         e.preventDefault()
 
         const user = {email ,userName ,password}
-        axios.post("http://localhost:1337/user", user)
+        axios.post("http://localhost:1337/user/", user)
             .then(() => {
                 window.sessionStorage.setItem(userName)
                 history.push(`/${userName}`)
             })
             .catch(err => {
                 const errArr = []
-                for(const key of Object.keys(err.response.data.message)){
-                    errArr.push(err.response.data.message[key].message)
+                const errors = err.response.data.errors
+                for(const key of Object.keys(errors)){
+                    errArr.push(errors[key].message)
                 }
                 setRegErr(errArr)
             })
@@ -38,7 +40,11 @@ const Registration = () => {
                 <label>Password</label>
                 <input value={password} onChange={e => setPassword(e.target.value)} />
                 <button>Submit</button>
-                {JSON.stringify(regErr)}
+                {
+                    regErr &&
+                    regErr.map( (v, i) => {return <p key={i} className="dangerErr">{v}</p>} )
+                }
+            
             </form>
         </div>
     )

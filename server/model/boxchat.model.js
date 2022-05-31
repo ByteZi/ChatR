@@ -1,10 +1,12 @@
 const validator = require('validator')
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt');
 
-const validateEmail = function(email) {
-    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    return re.test(email)
-};
+
+// const validateEmail = function(email) {
+//     var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+//     return re.test(email)
+// };
 
 const UserSchema = new mongoose.Schema({
     email : {
@@ -24,9 +26,33 @@ const UserSchema = new mongoose.Schema({
     },
     password : {
         type: String,
+        required : [true, 'Password is Required'],
         minlength : [8, 'Password is too short']
     }
 },{timestamps : true})
+
+// Confirm Password
+UserSchema.virtual('confirmPassword')
+  .get( () => this.confirmPassword )
+  .set( value => this.confirmPassword = value );
+
+UserSchema.pre('validate', function(next){
+    if (this.password !== this.confirmPassword){
+        this.invalidate('confirmPassword', 'Passwords do not match')
+    }
+    next();
+})
+
+
+
+//BCrypt
+UserSchema.pre("save", function(next){
+    bcrypt.hash(this.password, 10)
+        .then(hash => {
+            this.password = hash;
+            next();
+        })
+});
 
 const User = mongoose.model('User', UserSchema)
 module.exports = User
