@@ -8,6 +8,11 @@ const bcrypt = require('bcrypt');
 //     return re.test(email)
 // };
 
+const validateName = (userName) => {
+    var re = /^\S*[a-zA-Z0-9]$/
+    return re.test(userName);
+}
+
 const UserSchema = new mongoose.Schema({
     email : {
         type : String,
@@ -22,6 +27,7 @@ const UserSchema = new mongoose.Schema({
     userName : {
         type : String,
         minlength : [5, 'User name is too short'],
+        validate : [validateName,'User name should not have spaces'],
         unique : [true, 'Name is already taken']
     },
     password : {
@@ -42,8 +48,6 @@ UserSchema.pre('validate', function(next){
     }
     next();
 })
-
-
 
 //BCrypt
 UserSchema.pre("save", function(next){
