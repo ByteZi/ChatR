@@ -1,13 +1,14 @@
 import "./LogIn.css"
 import {useState} from 'react'
 import axios from 'axios'
-// import { useHistory } from "react-router-dom"
+import { useHistory } from "react-router-dom"
 
 const LogIn = () => {
 
     const [email, setEmail] = useState('')
     const [userPassword, setUserPassword] = useState('')
-    // const history = useHistory();
+    
+    const history = useHistory();
 
     const [logInErr, setLogInErr] = useState(false)
 
@@ -15,7 +16,7 @@ const LogIn = () => {
         e.preventDefault()
         axios.get(`http://localhost:1337/user/${email}`)
             .then(user => {
-                console.log(user)
+                history.pushState(`/Success`)
             })
             .catch(() => setLogInErr(true))
     }
@@ -30,6 +31,7 @@ const LogIn = () => {
                 <input value={email} onChange={e => setEmail(e.target.value)}/>
                 <label>Password</label>
                 <input value={userPassword} onChange={e => setUserPassword(e.target.value)}/>
+               
                 <button>Log In</button>
                 {
                     
