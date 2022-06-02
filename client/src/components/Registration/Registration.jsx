@@ -4,10 +4,10 @@ import { useHistory } from "react-router-dom"
 import './Registration.css'
 
 const Registration = () => {
-    const [userName, setUserName] = useState('Tester3')
-    const [email, setEmail] = useState('Tester3@gmail.com')
-    const [password, setPassword] = useState('Tester3')
-    const [confirmPassword, setConfirmPassword] = useState('Tester3')
+    const [userName, setUserName] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
 
     const [regErr, setRegErr] = useState(false)
     const history = useHistory();
@@ -15,13 +15,29 @@ const Registration = () => {
     const PostUserHandler = (e) => {
         e.preventDefault()
         const user = { email, userName, password, confirmPassword }
-        
+
         axios.post("http://localhost:1337/user/", user)
             .then(() => {
-                console.log('ran')
+                history.push(`/${userName}`)
             })
             .catch(err => {
-                console.log(err)
+                const errArr = []
+                const error = err.response.data
+
+                console.log(error)
+
+                if (error.errors) {
+                    for (const key of Object.keys(error.errors)) {
+                        errArr.push(error.errors[key].message)
+                    }
+                }
+                for (const key of Object.keys(error.keyValue)) {
+                    if (error.keyValue) {
+                        errArr.push(`${key.toLowerCase()} has already been taken`)
+                    }
+                }
+
+                setRegErr(errArr)
             })
     }
 

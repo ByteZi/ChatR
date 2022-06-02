@@ -5,7 +5,7 @@ module.exports = app => {
     app.get('/test', UserController.getAll)
 
     app.post("/user/", UserController.register)
-    app.post('/login/', UserController.login)
+    app.get('/login/', UserController.login)
     app.get('/logout', UserController.logout)
 
     // app.get('/user/:userName', UserController.testFind)

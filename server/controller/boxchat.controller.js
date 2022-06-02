@@ -28,19 +28,17 @@ module.exports = {
     },
 
     login: async(req, res) => {
-        console.log('ran')
+        
 
-        const user = await User.findOne({ userName: req.body.userName });
+        const user = await User.findOne({ userName: req.query.userName });
         if (user === null) {
             return res.sendStatus(400)
         }
 
-        const correctPassword = await bcrypt.compare(req.body.password, user.password);
+        const correctPassword = await bcrypt.compare(req.query.password, user.password);
         if (!correctPassword) {
             return res.sendStatus(400)
         }
-
-  
 
         //After Successful Login
 
@@ -49,8 +47,11 @@ module.exports = {
         }, process.env.SECRET_KEY);
 
         const secret = process.env.SECRET_KEY
+        
         res.cookie("usertoken", userToken, secret, { httpOnly: true })
             .json(user);
+        
+     
     },
 
     logout: (req, res) => {

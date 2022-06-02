@@ -13,22 +13,22 @@ const validateName = (userName) => {
 }
 
 const UserSchema = new mongoose.Schema({
+    userName : {
+        type : String,
+        required : [true,'Username is required'],
+        minlength : [5, 'User name is too short'],
+        validate : [validateName,'User name should not have spaces'],
+        unique : [true, 'Name is already taken']
+    },
     email : {
         type : String,
         required : [true, "Email Required"],
+        validate : [validator.isEmail, 'Invalid email'],
         unique : [true, "Email is already taken!"],
-        validate : [validator.isEmail, 'Invalid email']
     },
     emailValidate : {
         type : Boolean,
         default : false
-    },
-    userName : {
-        type : String,
-        required : [true,'Username is required'],
-        // minlength : [5, 'User name is too short'],
-        validate : [validateName,'User name should not have spaces'],
-        unique : [true, 'Name is already taken']
     },
     password : {
         type: String,

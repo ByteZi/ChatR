@@ -14,15 +14,15 @@ const LogIn = () => {
 
     const GetHandler = (e) => {
         e.preventDefault()
-        
-        const userObj = { userName, password }
-   
-        axios.post("http://localhost:1337/login/", userObj)
+        axios.get("http://localhost:1337/login/", {params:{
+            userName,
+            password
+        }})
             .then(res => {
                 const user = res.data.userName
                 history.push(`/${user}`)
             })
-            .catch(err => {
+            .catch(() => {
                 setLogInErr(true)
                 // console.log(err)
             })
