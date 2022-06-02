@@ -1,24 +1,31 @@
 import "./LogIn.css"
-import {useState} from 'react'
+import { useState } from 'react'
 import axios from 'axios'
 import { useHistory } from "react-router-dom"
 
 const LogIn = () => {
 
-    const [email, setEmail] = useState('')
-    const [userPassword, setUserPassword] = useState('')
-    
+    const [userName, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+
     const history = useHistory();
 
     const [logInErr, setLogInErr] = useState(false)
 
     const GetHandler = (e) => {
         e.preventDefault()
-        axios.get(`http://localhost:1337/user/${email}`)
-            .then(user => {
-                history.pushState(`/Success`)
+        
+        const userObj = { userName, password }
+   
+        axios.post("http://localhost:1337/login/", userObj)
+            .then(res => {
+                const user = res.data.userName
+                history.push(`/${user}`)
             })
-            .catch(() => setLogInErr(true))
+            .catch(err => {
+                setLogInErr(true)
+                // console.log(err)
+            })
     }
 
     return (
@@ -27,14 +34,14 @@ const LogIn = () => {
                 {
                     logInErr && <p>User does not exist</p>
                 }
-                <label>User name</label>
-                <input value={email} onChange={e => setEmail(e.target.value)}/>
+                <label>Username</label>
+                <input value={userName} onChange={e => setUsername(e.target.value)} />
                 <label>Password</label>
-                <input value={userPassword} onChange={e => setUserPassword(e.target.value)}/>
-               
+                <input value={password} onChange={e => setPassword(e.target.value)} />
+
                 <button>Log In</button>
                 {
-                    
+
                 }
             </form>
         </div>

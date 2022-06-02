@@ -3,7 +3,10 @@ const { authenticate } = require ('../config/jwt.config')
 
 module.exports = app => {
     app.get('/test', UserController.getAll)
-    app.get('/user/:username', UserController.findOne)
+
     app.post("/user/", UserController.register)
-    app.get('/user/:user',UserController.login)
+    app.post('/login/', UserController.login)
+    app.get('/logout', UserController.logout)
+
+    // app.get('/user/:userName', UserController.testFind)
 }

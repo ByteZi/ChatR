@@ -14,28 +14,14 @@ const Registration = () => {
 
     const PostUserHandler = (e) => {
         e.preventDefault()
-
         const user = { email, userName, password, confirmPassword }
-
+        
         axios.post("http://localhost:1337/user/", user)
             .then(() => {
-                // window.sessionStorage.setItem(userName)
-                history.push(`/success`)
+                console.log('ran')
             })
             .catch(err => {
-                const errArr = []
-                const errors = err.response.data
-
-                if (errors.errors) {
-                    for (const key of Object.keys(errors)) {
-                        errArr.push(errors[key].message)
-                    }
-                }else if(errors.keyValue){
-                    for (const key of Object.keys(errors.keyValue)){
-                        errArr.push(key.toLowerCase() + ' already exists')
-                    }
-                }
-                setRegErr(errArr);
+                console.log(err)
             })
     }
 

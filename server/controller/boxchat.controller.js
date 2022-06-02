@@ -1,48 +1,59 @@
 const User = require('../model/boxchat.model')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 
 module.exports = {
 
-    getAll: (req, res) =>{
+    getAll: (req, res) => {
         User.find({})
-            .then(allUsers => res.json({allUsers}))
+            .then(allUsers => res.json({ allUsers }))
     },
-    findOne:(req, res) => {
-        User.findOne({userName : req.params.username})
-            .then(user=> res.json(user))
+    testFind: (req, res) => {
+        User.findOne({ userName: req.params.userName })
+            .then(user => res.json(user))
             .catch(err => res.json(err))
     },
+
     register: (req, res) => {
         User.create(req.body)
-        .then(user => {
-            const userToken = jwt.sign({ id: user._id }, process.env.SECRET_KEY);
-     
-            res
-                .cookie("usertoken", userToken, secret, {
-                    httpOnly: true
-                })
-                .json({ msg: "success!", user: user });
-        })
-            .catch(err => res.status(400).json(err))//Still catching error after Successfuly posting user
+            .then(user => {
+                const userToken = jwt.sign({id: user._id}, process.env.SECRET_KEY);
+                const secret = process.env.SECRET_KEY
+
+                res
+                    .cookie("usertoken", userToken, secret, {httpOnly: true})
+                    .json({message : 'This response is a cookie'});
+            })
+            .catch(err => res.status(400).json(err));
     },
+
     login: async(req, res) => {
-        const user = await User.findOne({ email: req.body.email });
-        if(user === null) {
-            return res.sendStatus(400);
+        console.log('ran')
+
+        const user = await User.findOne({ userName: req.body.userName });
+        if (user === null) {
+            return res.sendStatus(400)
         }
+
         const correctPassword = await bcrypt.compare(req.body.password, user.password);
-        if(!correctPassword) {
-            return res.sendStatus(400);
+        if (!correctPassword) {
+            return res.sendStatus(400)
         }
+
+  
+
+        //After Successful Login
 
         const userToken = jwt.sign({
             id: user._id
         }, process.env.SECRET_KEY);
-      
-        res.cookie("usertoken", userToken, secret, {httpOnly: true})
-            .json({ msg: "success!" });
+
+        const secret = process.env.SECRET_KEY
+        res.cookie("usertoken", userToken, secret, { httpOnly: true })
+            .json(user);
     },
-    logout : (req,res) => {
+
+    logout: (req, res) => {
         res.clearCookie('usertoken')
         res.sendStatus(200)
     }

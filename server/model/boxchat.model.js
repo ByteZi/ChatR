@@ -26,12 +26,13 @@ const UserSchema = new mongoose.Schema({
     userName : {
         type : String,
         required : [true,'Username is required'],
-        minlength : [5, 'User name is too short'],
+        // minlength : [5, 'User name is too short'],
         validate : [validateName,'User name should not have spaces'],
         unique : [true, 'Name is already taken']
     },
     password : {
         type: String,
+        minlength : [5, 'Password is too short']
     }
 },{timestamps : true})
 
@@ -41,11 +42,12 @@ UserSchema.virtual('confirmPassword')
   .set( value => this.confirmPassword = value );
 
 UserSchema.pre('validate', function(next){
-    if(this.password.length == 0 ){
-        this.invalidate('emptyPassword','Password is required')
-    }else if (this.password.length < 3 ){
-        this.invalidate('shortPassword',"Password is too short")
-    }else if (this.password !== this.confirmPassword){
+    // if(this.password.length == 0 ){
+    //     this.invalidate('emptyPassword','Password is required')
+    // }else if (this.password.length < 3 ){
+    //     this.invalidate('shortPassword',"Password is too short")
+    // }else 
+    if (this.password !== this.confirmPassword){
         this.invalidate('confirmPassword', 'Passwords do not match')
     }
     next();
